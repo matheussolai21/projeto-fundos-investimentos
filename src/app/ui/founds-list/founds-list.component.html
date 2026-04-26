@@ -19,7 +19,7 @@
           <input 
             matInput 
             [(ngModel)]="searchTerm" 
-            (input)="filterFoundByCode(dataSource[0].id)"
+            (input)="onSearchChange()"
             placeholder="Buscar por código, nome, CNPJ ou tipo..."
           />
         </mat-form-field>
@@ -86,15 +86,6 @@
               <div class="acoes-buttons">
                 <button 
                   mat-mini-fab 
-                  color="primary" 
-                  matTooltip="Adicionar Fundo"
-                  (click)="editHeritage(fundo, fundo.codigo, fundo.patrimonio)"
-                >
-                  <mat-icon>adicionar</mat-icon>
-                </button>
-                
-                <button 
-                  mat-mini-fab 
                   color="accent" 
                   matTooltip="Editar Fundo"
                   (click)="editFound(fundo)"
@@ -145,6 +136,62 @@
       </section>
     </mat-card-content>
   </mat-card>
+ </section>
+ <section class="edit-modal-backdrop" *ngIf="showEditModal" (click)="closeEditModal()">
+  <section class="edit-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Editar Fundo</h2>
+      <button 
+        mat-icon-button 
+        class="close-button"
+        (click)="closeEditModal()"
+        [disabled]="editLoading"
+        aria-label="Fechar modal"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="editFormGroup" class="modal-content">
+      <mat-form-field appearance="outline" class="modal-field">
+        <mat-label>Código</mat-label>
+        <input matInput formControlName="codigo" />
+        <mat-error *ngIf="editFormGroup.get('codigo')?.hasError('required')">Código é obrigatório</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="modal-field">
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="nome" />
+        <mat-error *ngIf="editFormGroup.get('nome')?.hasError('required')">Nome é obrigatório</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="modal-field">
+        <mat-label>CNPJ</mat-label>
+        <input matInput formControlName="cnpj" />
+        <mat-error *ngIf="editFormGroup.get('cnpj')?.hasError('required')">CNPJ é obrigatório</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="modal-field">
+        <mat-label>Código Tipo</mat-label>
+        <input matInput formControlName="codigo_tipo" />
+        <mat-error *ngIf="editFormGroup.get('codigo_tipo')?.hasError('required')">Código Tipo é obrigatório</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="modal-field">
+        <mat-label>Patrimônio</mat-label>
+        <input matInput type="number" formControlName="patrimonio" />
+        <mat-error *ngIf="editFormGroup.get('patrimonio')?.hasError('required')">Patrimônio é obrigatório</mat-error>
+        <mat-error *ngIf="editFormGroup.get('patrimonio')?.hasError('min')">Patrimônio deve ser maior ou igual a 0</mat-error>
+      </mat-form-field>
+
+      <section class="modal-actions">
+        <button mat-stroked-button type="button" (click)="closeEditModal()" [disabled]="editLoading">Cancelar</button>
+        <button mat-raised-button color="primary" type="button" (click)="saveEditFundo()" [disabled]="editFormGroup.invalid || editLoading">
+          {{ editLoading ? 'Salvando...' : 'Salvar' }}
+        </button>
+      </section>
+    </form>
+  </section>
  </section>
 </main> 
 <app-footer>

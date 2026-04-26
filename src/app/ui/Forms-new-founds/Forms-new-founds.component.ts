@@ -104,7 +104,7 @@ export class FormsNewFoundsComponent implements OnInit {
     this.router.navigate(['found-list']);
   }
 
-    AddFounds(fundo: Fundo, code: number) {  // inserir no component da proxima pagina
+  AddFounds(fundo: Fundo, code: number) {  // inserir no component da proxima pagina
       this.foundsService.PostFounds(fundo).subscribe({
         next: (response) => {
           console.log('Sucesso:', response);
@@ -118,7 +118,6 @@ export class FormsNewFoundsComponent implements OnInit {
       });
   
       // this.dialog.open(DialogAdicionarFundoComponent);
-    }
+  }
   
-
 }

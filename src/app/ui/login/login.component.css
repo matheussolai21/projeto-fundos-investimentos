@@ -85,6 +85,17 @@ button mat-spinner {
   margin-right: 4px;
 }
 
+.full-width .mat-mdc-icon-button {
+  width: 40px;
+  height: 40px;
+}
+
+.full-width .mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
 /* Responsividade */
 @media (max-width: 600px) {
   .main-content {

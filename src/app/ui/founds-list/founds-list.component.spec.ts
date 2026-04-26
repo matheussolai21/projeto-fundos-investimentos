@@ -1,7 +1,6 @@
-/* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { FoundsListComponent } from './founds-list.component';
 
@@ -9,9 +8,13 @@ describe('FoundsListComponent', () => {
   let component: FoundsListComponent;
   let fixture: ComponentFixture<FoundsListComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ FoundsListComponent ]
+      imports: [
+        FoundsListComponent,
+        HttpClientTestingModule,
+        NoopAnimationsModule
+      ]
     })
     .compileComponents();
   }));

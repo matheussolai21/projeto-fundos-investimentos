@@ -10,20 +10,22 @@ import { Fundo } from '../interfaces/fundos.interface';
 export class FoundsService {
 
 constructor(private http: HttpClient ) { }
- private apiUrl: string = '  http://localhost:3000'
+ private apiUrl: string = 'http://localhost:3000'
+ public foundListServer: any;
 
  getFounds(): Observable<any> {
    return this.http.get<Fundo[]>( this.apiUrl + '/fundos');
  }
 
  getFoundsByCode(code: string): Observable<any> {
-  return this.http.get(`${this.apiUrl}/fundos/${code}`);
- }
+  const url = `${this.apiUrl}/fundos/:${code}`;
+  console.log(' Chamando:', url);
+  return this.http.get(url);
+}
 
   PostFounds(Founds: Fundo): Observable<any> {
     return this.http.post<any>(this.apiUrl + '/fundos', Founds);
   }
-
 
   PutFoundsByCode(Founds: Fundo, code: string): Observable<any> {
     return this.http.put<any>(this.apiUrl + '/fundos/`${code}`', Founds);
