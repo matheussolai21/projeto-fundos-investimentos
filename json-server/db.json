@@ -1,0 +1,258 @@
+{
+  "tipos_fundo": [
+    {
+      "codigo": 1,
+      "nome": "RENDA_FIXA",
+      "id": "Q7_PqNcvak4"
+    },
+    {
+      "codigo": 2,
+      "nome": "RENDA_VARIAVEL",
+      "id": "MTgFwIVaLW0"
+    },
+    {
+      "codigo": 3,
+      "nome": "MULTIMERCADO",
+      "id": "GoFw5HQerGU"
+    },
+    {
+      "codigo": 4,
+      "nome": "PREVIDENCIARIO",
+      "id": "h-M64zURU7k"
+    },
+    {
+      "codigo": 5,
+      "nome": "CAMBIAL",
+      "id": "VS8uXASVYOk"
+    }
+  ],
+  "fundos": [
+    {
+      "codigo": "FND001",
+      "nome": "ITAU RENDA FIXA PREMIUM",
+      "cnpj": "12345678000199",
+      "codigo_tipo": 1,
+      "patrimonio": 1500000000,
+      "id": "jeWjsH0wc_E"
+    },
+    {
+      "codigo": "FND002",
+      "nome": "ITAU MULTIMERCADO ARROJADO",
+      "cnpj": "98765432000188",
+      "codigo_tipo": 3,
+      "patrimonio": 850000000,
+      "id": "hqzt8fsVpSk"
+    },
+    {
+      "codigo": "FND003",
+      "nome": "ITAU PREVIDENCIA PRIVATE",
+      "cnpj": "45678912000177",
+      "codigo_tipo": 4,
+      "patrimonio": 3200000000,
+      "id": "cv7_QHg9DLM"
+    },
+    {
+      "codigo": "FND004",
+      "nome": "ITAU AÇÕES FUNDO",
+      "cnpj": "78912345000166",
+      "codigo_tipo": 2,
+      "patrimonio": 500000000,
+      "id": "kV51qIB7KAg"
+    },
+    {
+      "codigo": "FND001",
+      "nome": "ITAU RENDA FIXA PREMIUM",
+      "cnpj": "12345678000199",
+      "codigo_tipo": 1,
+      "patrimonio": 1500000000,
+      "id": "jeWjsH0wc_E"
+    },
+    {
+      "codigo": "FND002",
+      "nome": "ITAU MULTIMERCADO ARROJADO",
+      "cnpj": "98765432000188",
+      "codigo_tipo": 3,
+      "patrimonio": 850000000,
+      "id": "hqzt8fsVpSk"
+    },
+    {
+      "codigo": "FND003",
+      "nome": "ITAU PREVIDENCIA PRIVATE",
+      "cnpj": "45678912000177",
+      "codigo_tipo": 4,
+      "patrimonio": 3200000000,
+      "id": "cv7_QHg9DLM"
+    },
+    {
+      "codigo": "FND004",
+      "nome": "ITAU AÇÕES FUNDO",
+      "cnpj": "78912345000166",
+      "codigo_tipo": 2,
+      "patrimonio": 500000000,
+      "id": "kV51qIB7KAg"
+    },
+    {
+      "codigo": "FND001",
+      "nome": "ITAU RENDA FIXA PREMIUM",
+      "cnpj": "12345678000199",
+      "codigo_tipo": 1,
+      "patrimonio": 1500000000,
+      "id": "jeWjsH0wc_E"
+    },
+    {
+      "codigo": "FND002",
+      "nome": "ITAU MULTIMERCADO ARROJADO",
+      "cnpj": "98765432000188",
+      "codigo_tipo": 3,
+      "patrimonio": 850000000,
+      "id": "hqzt8fsVpSk"
+    },
+    {
+      "codigo": "FND003",
+      "nome": "ITAU PREVIDENCIA PRIVATE",
+      "cnpj": "45678912000177",
+      "codigo_tipo": 4,
+      "patrimonio": 3200000000,
+      "id": "cv7_QHg9DLM"
+    },
+    {
+      "codigo": "FND004",
+      "nome": "ITAU AÇÕES FUNDO",
+      "cnpj": "78912345000166",
+      "codigo_tipo": 2,
+      "patrimonio": 500000000,
+      "id": "kV51qIB7KAg"
+    },
+    {
+      "codigo": "FND001",
+      "nome": "ITAU RENDA FIXA PREMIUM",
+      "cnpj": "12345678000199",
+      "codigo_tipo": 1,
+      "patrimonio": 1500000000,
+      "id": "jeWjsH0wc_E"
+    },
+    {
+      "codigo": "FND002",
+      "nome": "ITAU MULTIMERCADO ARROJADO",
+      "cnpj": "98765432000188",
+      "codigo_tipo": 3,
+      "patrimonio": 850000000,
+      "id": "hqzt8fsVpSk"
+    },
+    {
+      "codigo": "FND003",
+      "nome": "ITAU PREVIDENCIA PRIVATE",
+      "cnpj": "45678912000177",
+      "codigo_tipo": 4,
+      "patrimonio": 3200000000,
+      "id": "cv7_QHg9DLM"
+    },
+    {
+      "codigo": "FND004",
+      "nome": "ITAU AÇÕES FUNDO",
+      "cnpj": "78912345000166",
+      "codigo_tipo": 2,
+      "patrimonio": 500000000,
+      "id": "kV51qIB7KAg"
+    },
+    {
+      "codigo": "FND001",
+      "nome": "ITAU RENDA FIXA PREMIUM",
+      "cnpj": "12345678000199",
+      "codigo_tipo": 1,
+      "patrimonio": 1500000000,
+      "id": "jeWjsH0wc_E"
+    },
+    {
+      "codigo": "FND002",
+      "nome": "ITAU MULTIMERCADO ARROJADO",
+      "cnpj": "98765432000188",
+      "codigo_tipo": 3,
+      "patrimonio": 850000000,
+      "id": "hqzt8fsVpSk"
+    },
+    {
+      "codigo": "FND003",
+      "nome": "ITAU PREVIDENCIA PRIVATE",
+      "cnpj": "45678912000177",
+      "codigo_tipo": 4,
+      "patrimonio": 3200000000,
+      "id": "cv7_QHg9DLM"
+    },
+    {
+      "codigo": "FND004",
+      "nome": "ITAU AÇÕES FUNDO",
+      "cnpj": "78912345000166",
+      "codigo_tipo": 2,
+      "patrimonio": 500000000,
+      "id": "kV51qIB7KAg"
+    },
+    {
+      "codigo": "FND001",
+      "nome": "ITAU RENDA FIXA PREMIUM",
+      "cnpj": "12345678000199",
+      "codigo_tipo": 1,
+      "patrimonio": 1500000000,
+      "id": "jeWjsH0wc_E"
+    },
+    {
+      "codigo": "FND002",
+      "nome": "ITAU MULTIMERCADO ARROJADO",
+      "cnpj": "98765432000188",
+      "codigo_tipo": 3,
+      "patrimonio": 850000000,
+      "id": "hqzt8fsVpSk"
+    },
+    {
+      "codigo": "FND003",
+      "nome": "ITAU PREVIDENCIA PRIVATE",
+      "cnpj": "45678912000177",
+      "codigo_tipo": 4,
+      "patrimonio": 3200000000,
+      "id": "cv7_QHg9DLM"
+    },
+    {
+      "codigo": "FND004",
+      "nome": "ITAU AÇÕES FUNDO",
+      "cnpj": "78912345000166",
+      "codigo_tipo": 2,
+      "patrimonio": 500000000,
+      "id": "kV51qIB7KAg"
+    }
+  ],
+  "login": [
+    {
+      "id": 1,
+      "username": "admin",
+      "email": "admin@itau.com.br",
+      "password": "123456",
+      "nome": "Administrador",
+      "role": "admin",
+      "created_at": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "username": "usuario",
+      "email": "usuario@itau.com.br",
+      "password": "$2a$10$YKqGmKqQEqxvzPLVo3YrYOzQkBKZHVXZQZQZQZQZQZQZQZQZQZQ",
+      "nome": "Usuário Comum",
+      "role": "user",
+      "created_at": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "username": "gestor",
+      "email": "gestor@itau.com.br",
+      "password": "$2a$10$YKqGmKqQEqxvzPLVo3YrYOzQkBKZHVXZQZQZQZQZQZQZQZQZQZQ",
+      "nome": "Gestor de Fundos",
+      "role": "gestor",
+      "created_at": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "username": "adm",
+      "password": "$2a$10$YKqGmKqQEqxvzPLVo3YrYOzQkBKZHVXZQZQZQZQZQZQZQZQZQZQ",
+      "id": 4
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
