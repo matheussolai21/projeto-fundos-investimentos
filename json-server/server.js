@@ -51,7 +51,7 @@ server.get('/health', (req, res) => {
 
 // Login - ROTA PÚBLICA
 server.post('/usuarios', (req, res) => {
-  console.log('🔵 Login request:', req.body);
+  console.log('Login request:', req.body);
   
   const db = router.db;  // ✅ Usa o banco do JSON Server
   const { username, password } = req.body;

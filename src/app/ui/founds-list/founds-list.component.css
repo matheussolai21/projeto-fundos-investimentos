@@ -1,0 +1,157 @@
+.main-content {
+  margin-top: 64px;
+  margin-bottom: 60px;
+  min-height: calc(100vh - 124px);
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+
+.container {
+  padding: 20px;
+  margin-top: 64px;
+  margin-bottom: 60px;
+  min-height: calc(100vh - 124px);
+  background: #f5f5f5;
+}
+
+mat-card {
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+mat-card-header {
+  background: linear-gradient(135deg, #1976D2 0%, #2196F3 100%);
+  color: white;
+  padding: 20px 24px;
+  border-radius: 16px 16px 0 0;
+  margin-bottom: 20px;
+}
+
+mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  color: white;
+}
+
+mat-card-subtitle {
+  color: rgba(255,255,255,0.9);
+}
+
+.toolbar-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 250px;
+}
+
+.add-button {
+  height: 56px;
+  padding: 0 24px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+mat-header-cell, mat-cell {
+  padding: 0 16px;
+}
+
+mat-header-cell {
+  font-weight: 600;
+  color: #1976D2;
+  font-size: 14px;
+}
+
+.acoes-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.acoes-buttons button {
+  transform: scale(0.9);
+  transition: transform 0.2s;
+}
+
+.acoes-buttons button:hover {
+  transform: scale(1);
+}
+
+.patrimonio-value {
+  font-weight: 500;
+  color: #2E7D32;
+}
+
+mat-chip {
+  background: #E3F2FD;
+  color: #1976D2;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.no-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px;
+  color: #999;
+  font-size: 16px;
+}
+
+.summary {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  text-align: right;
+  font-size: 14px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+
+  .toolbar-actions {
+    flex-direction: column;
+  }
+
+  .search-field {
+    width: 100%;
+  }
+
+  .add-button {
+    width: 100%;
+  }
+
+  .acoes-buttons {
+    flex-direction: row;
+  }
+
+  mat-header-cell, mat-cell {
+    padding: 0 8px;
+    font-size: 12px;
+  }
+}
