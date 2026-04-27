@@ -79,28 +79,78 @@ export class FormsNewFoundsComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-    if (this.fundoForm.invalid) {
-      this.snackBar.open('Preencha todos os campos corretamente', 'Fechar', { duration: 3000 });
-      return;
-    }
-
-    this.loading = true;
-
-      const fundoData = {
-      nome: this.fundoForm.value.nome,
-      cnpj: this.fundoForm.value.cnpj.replace(/\D/g, ''),
-      codigo_tipo: this.fundoForm.value.codigo_tipo,
-      patrimonio: this.fundoForm.value.patrimonio
-      // adicionar id autoincremento 
-    };
-    
-    // this.AddFounds(fundoData);
-     this.cancelar();   
- 
+onSubmit() {
+  if (this.fundoForm.invalid) {
+    this.snackBar.open('Preencha todos os campos corretamente', 'Fechar', { duration: 3000 });
+    return;
   }
 
-   cancelar() {
+  this.loading = true;
+
+  const codigoGerado = this.generateCode();
+  const cnpjLimpo = this.fundoForm.value.cnpj.replace(/\D/g, '');
+  
+  const currentData: Fundo[] = Array.isArray(this.foundsService.foundListServer)
+    ? this.foundsService.foundListServer
+    : [];
+  
+  const codigoExistente = currentData.some(fundo => fundo.codigo === codigoGerado);
+  if (codigoExistente) {
+    this.snackBar.open(`Código ${codigoGerado} já existe!`, 'Fechar', { duration: 4000 });
+    this.loading = false;
+    return;
+  }
+ 
+  //validação cnpj
+  const cnpjExistente = currentData.some(fundo => 
+    fundo.cnpj.replace(/\D/g, '') === cnpjLimpo
+  );
+  
+  if (cnpjExistente) {
+    this.snackBar.open(`CNPJ ${this.fundoForm.value.cnpj} já cadastrado!`, 'Fechar', { duration: 4000 });
+    this.loading = false;
+    return;
+  }
+
+  const fundoData: Fundo = {
+    codigo: codigoGerado, 
+    nome: this.fundoForm.value.nome.trim(),
+    cnpj: this.fundoForm.value.cnpj.trim(),
+    codigo_tipo: String(this.fundoForm.value.codigo_tipo).trim(),
+    patrimonio: Number(this.fundoForm.value.patrimonio)
+  };
+
+  this.foundsService.foundListServer = [fundoData, ...currentData];
+  this.loading = false;
+
+  this.snackBar.open(`Fundo ${fundoData.codigo} salvo com sucesso!`, 'Fechar', { duration: 3000 });
+  this.router.navigate(['/found-list']);
+}
+
+private generateCode(): string {
+  const currentData: Fundo[] = Array.isArray(this.foundsService.foundListServer)
+    ? this.foundsService.foundListServer
+    : [];
+  
+  if (currentData.length === 0) {
+    return 'FND001';
+  }
+  
+  const numbers = currentData
+    .map(fundo => {
+      const match = fundo.codigo.match(/\d+/);
+      return match ? parseInt(match[0], 10) : 0;
+    })
+    .filter(num => !isNaN(num));
+  
+  const maxNumber = numbers.length > 0 ? Math.max(...numbers) : 0;
+  const nextNumber = maxNumber + 1;
+  const paddedNumber = nextNumber.toString().padStart(3, '0');
+  
+  return `FND${paddedNumber}`;
+}
+
+  cancelar() {
     this.router.navigate(['found-list']);
   }
 

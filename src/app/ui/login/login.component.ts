@@ -8,7 +8,7 @@ import { FooterComponent } from '../../component/footer/footer.component';
 import { HeaderComponent } from '../../component/header/header.component';
 import { Auth, AuthResponse } from '../../interfaces/auth.interface';
 import { AuthService } from '../../Services/auth.service';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -52,14 +52,14 @@ export class LoginComponent implements OnInit {
   }
 
    ngOnInit() {
-    
    }
+   
   clickEvent(event: MouseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();
    }
 
-Login(auth: Auth): void {
+ Login(auth: Auth): void {
     this.loading.set(true);
     
     this.authService.PostLogin(auth).subscribe({

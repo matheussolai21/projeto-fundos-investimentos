@@ -19,8 +19,8 @@
           <input 
             matInput 
             [(ngModel)]="searchTerm" 
-            (input)="onSearchChange()"
-            placeholder="Buscar por código, nome, CNPJ ou tipo..."
+            (input)="filterFoundByCode(searchTerm)"
+            placeholder="Buscar por código"
           />
         </mat-form-field>
         
@@ -88,7 +88,7 @@
                   mat-mini-fab 
                   color="accent" 
                   matTooltip="Editar Fundo"
-                  (click)="editFound(fundo)"
+                  (click)="saveEditFundo(fundo)"
                 >
                   <mat-icon>edit</mat-icon>
                 </button>
@@ -154,12 +154,6 @@
 
     <form [formGroup]="editFormGroup" class="modal-content">
       <mat-form-field appearance="outline" class="modal-field">
-        <mat-label>Código</mat-label>
-        <input matInput formControlName="codigo" />
-        <mat-error *ngIf="editFormGroup.get('codigo')?.hasError('required')">Código é obrigatório</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="modal-field">
         <mat-label>Nome</mat-label>
         <input matInput formControlName="nome" />
         <mat-error *ngIf="editFormGroup.get('nome')?.hasError('required')">Nome é obrigatório</mat-error>
@@ -167,15 +161,10 @@
 
       <mat-form-field appearance="outline" class="modal-field">
         <mat-label>CNPJ</mat-label>
-        <input matInput formControlName="cnpj" />
+        <input matInput formControlName="cnpj" type="text"mask="00.000.000/0000-00" />
         <mat-error *ngIf="editFormGroup.get('cnpj')?.hasError('required')">CNPJ é obrigatório</mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="modal-field">
-        <mat-label>Código Tipo</mat-label>
-        <input matInput formControlName="codigo_tipo" />
-        <mat-error *ngIf="editFormGroup.get('codigo_tipo')?.hasError('required')">Código Tipo é obrigatório</mat-error>
-      </mat-form-field>
 
       <mat-form-field appearance="outline" class="modal-field">
         <mat-label>Patrimônio</mat-label>

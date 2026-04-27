@@ -1,17 +1,40 @@
-// server.js - VERSÃO CORRIGIDA
+// server.js - VERSÃO COMPLETA E CORRETA
 const jsonServer = require('json-server');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
+// Criar servidor UMA VEZ
 const server = jsonServer.create();
 const router = jsonServer.router(path.join(__dirname, 'db.json'));
 const middlewares = jsonServer.defaults();
 
-// Middlewares básicos
-server.use(cors());
-server.use(express.json());
-server.use(middlewares);
+const SECRET_KEY = 'seu-chave-secreta-jwt';
+const TOKEN_EXPIRATION = '8h';
+
+// ==================== FUNÇÕES DE TOKEN ====================
+
+// Gerar token
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user.id, username: user.username, email: user.email },
+    SECRET_KEY,
+    { expiresIn: TOKEN_EXPIRATION }
+  );
+};
+
+// Verificar token
+const verifyToken = (token) => {
+  try {
+    return jwt.verify(token, SECRET_KEY);
+  } catch (error) {
+    return null;
+  }
+};
+
+// ==================== VALIDAÇÕES ====================
 
 // Validar CNPJ
 const validateCNPJ = (cnpj) => {
@@ -19,9 +42,123 @@ const validateCNPJ = (cnpj) => {
   return cnpjStr.length === 14;
 };
 
-// ==================== ROTAS PÚBLICAS (NÃO PRECISAM DE TOKEN) ====================
+// ==================== MIDDLEWARES BÁSICOS ====================
+server.use(cors());
+server.use(express.json());
+server.use(middlewares);
 
-// Rota GET - Listar todos os fundos (PÚBLICA - sem autenticação)
+// ==================== ROTAS PÚBLICAS ====================
+
+// Health check
+server.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Login
+server.post('/login', (req, res) => {
+  console.log('Login request:', req.body);
+  
+  const db = router.db;
+  const { username, password } = req.body;
+  
+  if (!username || !password) {
+    return res.status(400).json({ 
+      success: false,
+      error: 'Usuário e senha são obrigatórios' 
+    });
+  }
+  
+  const user = db.get('usuarios').find({ username }).value();
+  
+  if (!user) {
+    console.log('Usuário não encontrado:', username);
+    return res.status(401).json({ 
+      success: false,
+      error: 'Usuário ou senha inválidos' 
+    });
+  }
+  
+  let passwordValid = false;
+  // if (user.password && (user.password.startsWith('$2a$') || user.password.startsWith('$2b$'))) {
+  //   passwordValid = bcrypt.compareSync(password, user.password);
+  // } else {
+  //   passwordValid = (password === user.password);
+  // }
+
+    if (user.password && (user.password || user.password)) {
+    passwordValid = bcrypt.compareSync(password, user.password);
+  } else {
+    passwordValid = (password === user.password);
+  }
+  
+  if (!passwordValid) {
+    console.log('Senha inválida para:', username);
+    return res.status(401).json({ 
+      success: false,
+      error: 'Usuário ou senha inválidos' 
+    });
+  }
+  
+  const token = generateToken(user);
+  const { password: _, ...userWithoutPassword } = user;
+  
+  console.log('sLogin successful:', username);
+  
+  res.json({
+    success: true,
+    message: 'Login realizado com sucesso',
+    token,
+    user: userWithoutPassword,
+    expiresIn: TOKEN_EXPIRATION
+  });
+});
+
+// Register
+server.post('/register', async (req, res) => {
+  const db = router.db;
+  const { username, email, password, nome } = req.body;
+  
+  if (!username || !email || !password) {
+    return res.status(400).json({ error: 'Campos obrigatórios' });
+  }
+  
+  const userExists = db.get('usuarios').find({ username }).value();
+  if (userExists) {
+    return res.status(400).json({ error: 'Usuário já existe' });
+  }
+  
+  const emailExists = db.get('usuarios').find({ email }).value();
+  if (emailExists) {
+    return res.status(400).json({ error: 'Email já cadastrado' });
+  }
+  
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  
+  const newUser = {
+    id: Date.now(),
+    username,
+    email,
+    password: hashedPassword,
+    nome: nome || username,
+    role: 'user',
+    created_at: new Date().toISOString()
+  };
+  
+  db.get('usuarios').push(newUser).write();
+  
+  const token = generateToken(newUser);
+  const { password: _, ...userWithoutPassword } = newUser;
+  
+  res.status(201).json({
+    success: true,
+    token,
+    user: userWithoutPassword
+  });
+});
+
+// ==================== ROTAS DE FUNDOS ====================
+
+// GET - Listar todos os fundos
 server.get('/fundos', (req, res) => {
   const db = router.db;
   const fundos = db.get('fundos').value();
@@ -35,7 +172,7 @@ server.get('/fundos', (req, res) => {
   res.json(fundosEnriquecidos);
 });
 
-// Rota GET - Detalhes de um fundo por código (PÚBLICA)
+// GET - Detalhes de um fundo por código
 server.get('/fundos/:codigo', (req, res) => {
   console.log('🔵 Buscando fundo com código:', req.params.codigo);
   
@@ -45,13 +182,13 @@ server.get('/fundos/:codigo', (req, res) => {
   const fundo = db.get('fundos').find({ codigo }).value();
   
   if (!fundo) {
-    console.log('❌ Fundo não encontrado:', codigo);
+    console.log('Fundo não encontrado:', codigo);
     return res.status(404).json({ error: 'Fundo não encontrado' });
   }
   
   const tipo = db.get('tipos_fundo').find({ codigo: fundo.codigo_tipo }).value();
   
-  console.log('✅ Fundo encontrado:', fundo.nome);
+  console.log('Fundo encontrado:', fundo.nome);
   
   res.json({
     ...fundo,
@@ -59,12 +196,11 @@ server.get('/fundos/:codigo', (req, res) => {
   });
 });
 
-// Rota POST - Cadastrar novo fundo
+// POST - Criar novo fundo
 server.post('/fundos', (req, res) => {
   const db = router.db;
   const { codigo, nome, cnpj, codigo_tipo, patrimonio = 0 } = req.body;
   
-  // Validações
   if (!codigo || !nome || !cnpj || !codigo_tipo) {
     return res.status(400).json({ 
       error: 'Campos obrigatórios: codigo, nome, cnpj, codigo_tipo' 
@@ -90,25 +226,15 @@ server.post('/fundos', (req, res) => {
     return res.status(400).json({ error: 'Tipo de fundo inválido' });
   }
   
-  const novoFundo = {
-    codigo,
-    nome,
-    cnpj,
-    codigo_tipo,
-    patrimonio
-  };
-  
+  const novoFundo = { codigo, nome, cnpj, codigo_tipo, patrimonio };
   db.get('fundos').push(novoFundo).write();
   
   const tipo = db.get('tipos_fundo').find({ codigo: codigo_tipo }).value();
   
-  res.status(201).json({
-    ...novoFundo,
-    tipo_nome: tipo?.nome
-  });
+  res.status(201).json({ ...novoFundo, tipo_nome: tipo?.nome });
 });
 
-// Rota PUT - Editar fundo existente
+// PUT - Editar fundo
 server.put('/fundos/:codigo', (req, res) => {
   const db = router.db;
   const { codigo } = req.params;
@@ -131,21 +257,16 @@ server.put('/fundos/:codigo', (req, res) => {
     ...fundoExistente,
     nome: nome || fundoExistente.nome,
     cnpj: cnpj || fundoExistente.cnpj,
-    codigo_tipo: codigo_tipo || fundoExistente.codigo_tipo,
-    patrimonio: patrimonio !== undefined ? patrimonio : fundoExistente.patrimonio
   };
   
   db.get('fundos').find({ codigo }).assign(fundoAtualizado).write();
   
   const tipo = db.get('tipos_fundo').find({ codigo: fundoAtualizado.codigo_tipo }).value();
   
-  res.json({
-    ...fundoAtualizado,
-    tipo_nome: tipo?.nome
-  });
+  res.json({ ...fundoAtualizado, tipo_nome: tipo?.nome });
 });
 
-// Rota DELETE - Excluir fundo
+// DELETE - Excluir fundo
 server.delete('/fundos/:codigo', (req, res) => {
   const db = router.db;
   const { codigo } = req.params;
@@ -157,11 +278,10 @@ server.delete('/fundos/:codigo', (req, res) => {
   }
   
   db.get('fundos').remove({ codigo }).write();
-  
   res.status(204).send();
 });
 
-// Rota PUT - Adicionar/subtrair patrimônio
+// PUT - Alterar patrimônio
 server.put('/fundos/:codigo/patrimonio', (req, res) => {
   const db = router.db;
   const { codigo } = req.params;
@@ -193,21 +313,37 @@ server.put('/fundos/:codigo/patrimonio', (req, res) => {
   });
 });
 
-// Rota GET - Listar tipos de fundo
+// GET - Listar tipos de fundo
 server.get('/tipos-fundo', (req, res) => {
   const db = router.db;
   const tipos = db.get('tipos_fundo').value();
   res.json(tipos);
 });
 
-// Usar router padrão para outras rotas
+// ==================== ROUTER PADRÃO ====================
 server.use('/api', router);
 
-// Porta do servidor
+// ==================== INICIAR SERVIDOR ====================
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
-  console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
-  console.log('📋 GET /fundos/:codigo - Buscar fundo por código');
-  console.log('📋 GET /fundos - Listar todos os fundos');
+  console.log(`
+  ╔══════════════════════════════════════════════════════╗
+  ║         JSON Server - API de Fundos Itaú             ║
+  ╠══════════════════════════════════════════════════════╣
+  ║  ✅ Servidor rodando em: http://localhost:${PORT}     ║
+  ╠══════════════════════════════════════════════════════╣
+  ║  🔓 Rotas Públicas:                                  ║
+  ║  POST   /login           - Login                     ║
+  ║  POST   /register        - Registro                  ║
+  ║  GET    /health          - Health check              ║
+  ║  GET    /fundos          - Listar fundos             ║
+  ║  GET    /fundos/:codigo  - Detalhes fundo            ║
+  ║  POST   /fundos          - Criar fundo               ║
+  ║  PUT    /fundos/:codigo  - Editar fundo              ║
+  ║  DELETE /fundos/:codigo  - Excluir fundo             ║
+  ║  PUT    /fundos/:codigo/patrimonio - Alterar patrimônio ║
+  ║  GET    /tipos-fundo     - Listar tipos              ║
+  ╚══════════════════════════════════════════════════════╝
+  `);
 });
