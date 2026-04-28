@@ -79,22 +79,6 @@ server.post('/login', (req, res) => {
     });
   }
   
-
-
-  //   if (user.password && (user.password || user.password)) {
-    // passwordValid = bcrypt.compareSync(password, user.password);
-  // } else {
-  //   passwordValid = (password === user.password);
-  // }
-  
-  // if (!passwordValid) {
-  //   console.log('Senha inválida para:', username);
-  //   return res.status(401).json({ 
-  //     success: false,
-  //     error: 'Usuário ou senha inválidos' 
-  //   });
-  // }
-  
   const token = generateToken(user);
   const { password: _, ...userWithoutPassword } = user;
   

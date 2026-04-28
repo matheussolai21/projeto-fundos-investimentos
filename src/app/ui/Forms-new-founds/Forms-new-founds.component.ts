@@ -55,6 +55,7 @@ export class FormsNewFoundsComponent implements OnInit {
 
   ) { 
         this.fundoForm = this.fb.group({
+      codigo: ['', [Validators.required, Validators.minLength(3)]],    
       nome: ['', [Validators.required, Validators.minLength(3)]],
       cnpj: ['', [Validators.required, Validators.pattern(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/)]],
       codigo_tipo: ['', Validators.required],
@@ -87,74 +88,29 @@ onSubmit() {
 
   this.loading = true;
 
-  const codigoGerado = this.generateCode();
   const cnpjLimpo = this.fundoForm.value.cnpj.replace(/\D/g, '');
   
-  const currentData: Fundo[] = Array.isArray(this.foundsService.foundListServer)
-    ? this.foundsService.foundListServer
-    : [];
-  
-  const codigoExistente = currentData.some(fundo => fundo.codigo === codigoGerado);
-  if (codigoExistente) {
-    this.snackBar.open(`Código ${codigoGerado} já existe!`, 'Fechar', { duration: 4000 });
-    this.loading = false;
-    return;
-  }
- 
-  //validação cnpj
-  const cnpjExistente = currentData.some(fundo => 
-    fundo.cnpj.replace(/\D/g, '') === cnpjLimpo
-  );
-  
-  if (cnpjExistente) {
-    this.snackBar.open(`CNPJ ${this.fundoForm.value.cnpj} já cadastrado!`, 'Fechar', { duration: 4000 });
-    this.loading = false;
-    return;
-  }
-
   const fundoData: Fundo = {
-    codigo: codigoGerado, 
+    codigo: this.fundoForm.value.codigo, // Gerar código único ou usar um serviço para isso
     nome: this.fundoForm.value.nome.trim(),
     cnpj: this.fundoForm.value.cnpj.trim(),
-    codigo_tipo: String(this.fundoForm.value.codigo_tipo).trim(),
+    codigo_tipo: Number(this.fundoForm.value.codigo_tipo),
     patrimonio: Number(this.fundoForm.value.patrimonio)
   };
 
-  this.foundsService.foundListServer = [fundoData, ...currentData];
-  this.loading = false;
+  this.AddFounds(fundoData) // inserir no component da proxima pagina
+    
 
   this.snackBar.open(`Fundo ${fundoData.codigo} salvo com sucesso!`, 'Fechar', { duration: 3000 });
   this.router.navigate(['/found-list']);
 }
 
-private generateCode(): string {
-  const currentData: Fundo[] = Array.isArray(this.foundsService.foundListServer)
-    ? this.foundsService.foundListServer
-    : [];
-  
-  if (currentData.length === 0) {
-    return 'FND001';
-  }
-  
-  const numbers = currentData
-    .map(fundo => {
-      const match = fundo.codigo.match(/\d+/);
-      return match ? parseInt(match[0], 10) : 0;
-    })
-    .filter(num => !isNaN(num));
-  
-  const maxNumber = numbers.length > 0 ? Math.max(...numbers) : 0;
-  const nextNumber = maxNumber + 1;
-  const paddedNumber = nextNumber.toString().padStart(3, '0');
-  
-  return `FND${paddedNumber}`;
-}
 
   cancelar() {
     this.router.navigate(['found-list']);
   }
 
-  AddFounds(fundo: Fundo, code: number) {  // inserir no component da proxima pagina
+  AddFounds(fundo: Fundo) {  // inserir no component da proxima pagina
       this.foundsService.PostFounds(fundo).subscribe({
         next: (response) => {
           console.log('Sucesso:', response);

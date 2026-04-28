@@ -12,6 +12,16 @@
 
       <mat-card-content>
         <form [formGroup]="fundoForm" (ngSubmit)="onSubmit()">
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>codigo</mat-label>
+            <input 
+              matInput 
+              formControlName="codigo" 
+              placeholder="12.345.678/0001-99"
+            />
+            
+          </mat-form-field>
           <!-- Campo NOME -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Nome do Fundo</mat-label>

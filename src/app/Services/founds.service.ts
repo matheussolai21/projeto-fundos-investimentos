@@ -11,7 +11,6 @@ export class FoundsService {
 
 constructor(private http: HttpClient ) { }
  private apiUrl: string = 'http://localhost:3000'
- public foundListServer: any;
 
  getFounds(): Observable<any> {
    return this.http.get<Fundo[]>( this.apiUrl + '/fundos');
@@ -24,7 +23,7 @@ constructor(private http: HttpClient ) { }
 }
 
   PostFounds(Founds: Fundo): Observable<any> {
-    return this.http.post<any>(this.apiUrl + '/fundos', Founds);
+    return this.http.post<any>(`${this.apiUrl}/fundos`, Founds);
   }
 
 

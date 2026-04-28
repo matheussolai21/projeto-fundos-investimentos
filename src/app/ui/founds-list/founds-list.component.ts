@@ -92,27 +92,31 @@ export class FoundsListComponent implements OnInit, OnDestroy {
       this.closeEditModal();
     }
   }
-  carregarFundos() {
-    // Dados mockados - substituir pela chamada da API
-    this.foundsService.getFounds().subscribe({
-      next: (fundo: Fundo[]) => {
-        const apiFounds: Fundo[] = Array.isArray(fundo) ? fundo : [];
-        const localFounds: Fundo[] = Array.isArray(this.foundsService.foundListServer)
-          ? this.foundsService.foundListServer
-          : [];
-
-        const localCodes = new Set(localFounds.map((item) => item.codigo));
-        const apiOnlyFounds = apiFounds.filter((item) => !localCodes.has(item.codigo));
-
-        this.dataSource = [...localFounds, ...apiOnlyFounds];
-        this.foundsService.foundListServer = [...this.dataSource];
-        console.log('Lista trazido com sucesso:', this.dataSource);
-        this.atualizarFiltro();
-      },
-      error: (erro: unknown) => console.error('Erro: erro ao trazer a lista', erro)
-    });
-  }
-
+carregarFundos() {
+  this.foundsService.getFounds().subscribe({
+    next: (fundos: Fundo[]) => {
+      // Armazena apenas na dataSource do componente
+      this.dataSource = Array.isArray(fundos) ? fundos : [];
+      
+      // Atualiza o filteredDataSource para exibição
+      this.filteredDataSource = [...this.dataSource];
+      
+      console.log('Lista carregada da API com sucesso:', this.dataSource.length, 'fundos');
+      
+      // Aplica filtro se existir
+      this.atualizarFiltro();
+    },
+    error: (error: unknown) => {
+      console.error('❌ Erro ao carregar fundos:', error);
+      this.dataSource = [];
+      this.filteredDataSource = [];
+      this.atualizarFiltro();
+      
+      // Opcional: mostrar mensagem para o usuário
+      this.snackBar?.open('Erro ao carregar lista de fundos', 'Fechar', { duration: 3000 });
+    }
+  });
+}
   atualizarFiltro() {
     if (!this.searchTerm) {
       this.filteredDataSource = [...this.dataSource];
@@ -122,7 +126,7 @@ export class FoundsListComponent implements OnInit, OnDestroy {
         fundo.codigo.toLowerCase().includes(term) ||
         fundo.nome.toLowerCase().includes(term) ||
         fundo.cnpj.includes(term) ||
-        fundo.codigo_tipo.toLowerCase().includes(term)
+        fundo.codigo_tipo.toString().includes(term)
       );
     }
   }
@@ -146,7 +150,6 @@ export class FoundsListComponent implements OnInit, OnDestroy {
 
   // Ações
   RedirectByForm() { // redirecionar pra tela nova
-    this.foundsService.foundListServer = [...this.dataSource];
     this.snackBar.open('Abrindo formulário para adicionar fundo...', 'Fechar', { duration: 2000 });
     this.router.navigate(['forms-new-founds']);
   }
