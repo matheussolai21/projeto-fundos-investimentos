@@ -234,37 +234,6 @@ server.post('/fundos', (req, res) => {
   res.status(201).json({ ...novoFundo, tipo_nome: tipo?.nome });
 });
 
-// PUT - Editar fundo
-server.put('/fundos/:codigo', (req, res) => {
-  const db = router.db;
-  const { codigo } = req.params;
-  const { nome, cnpj, codigo_tipo, patrimonio } = req.body;
-  
-  const fundoExistente = db.get('fundos').find({ codigo }).value();
-  
-  if (!fundoExistente) {
-    return res.status(404).json({ error: 'Fundo não encontrado' });
-  }
-  
-  if (cnpj && cnpj !== fundoExistente.cnpj) {
-    const cnpjExistente = db.get('fundos').find({ cnpj }).value();
-    if (cnpjExistente) {
-      return res.status(400).json({ error: 'CNPJ já cadastrado para outro fundo' });
-    }
-  }
-  
-  const fundoAtualizado = {
-    ...fundoExistente,
-    nome: nome || fundoExistente.nome,
-    cnpj: cnpj || fundoExistente.cnpj,
-  };
-  
-  db.get('fundos').find({ codigo }).assign(fundoAtualizado).write();
-  
-  const tipo = db.get('tipos_fundo').find({ codigo: fundoAtualizado.codigo_tipo }).value();
-  
-  res.json({ ...fundoAtualizado, tipo_nome: tipo?.nome });
-});
 
 // DELETE - Excluir fundo
 server.delete('/fundos/:codigo', (req, res) => {
@@ -281,45 +250,53 @@ server.delete('/fundos/:codigo', (req, res) => {
   res.status(204).send();
 });
 
-// PUT - Alterar patrimônio
-server.put('/fundos/:codigo/patrimonio', (req, res) => {
+server.patch('/fundos/:codigo', (req, res) => {
   const db = router.db;
   const { codigo } = req.params;
-  const { valor } = req.body;
+  const { nome, cnpj, codigo_tipo, patrimonio } = req.body;
   
-  if (valor === undefined || typeof valor !== 'number') {
-    return res.status(400).json({ error: 'Valor é obrigatório e deve ser numérico' });
-  }
+  // Busca o fundo existente
+  const fundoExistente = db.get('fundos').find({ codigo }).value();
   
-  const fundo = db.get('fundos').find({ codigo }).value();
-  
-  if (!fundo) {
+  if (!fundoExistente) {
     return res.status(404).json({ error: 'Fundo não encontrado' });
   }
   
-  const novoPatrimonio = fundo.patrimonio + valor;
-  
-  if (novoPatrimonio < 0) {
-    return res.status(400).json({ error: 'Patrimônio não pode ficar negativo' });
+  // Valida CNPJ duplicado (se estiver alterando)
+  if (cnpj && cnpj !== fundoExistente.cnpj) {
+    const cnpjExistente = db.get('fundos').find({ cnpj }).value();
+    if (cnpjExistente) {
+      return res.status(400).json({ error: 'CNPJ já cadastrado para outro fundo' });
+    }
   }
   
-  db.get('fundos').find({ codigo }).assign({ patrimonio: novoPatrimonio }).write();
+  // Valida patrimônio negativo
+  if (patrimonio !== undefined && patrimonio < 0) {
+    return res.status(400).json({ error: 'Patrimônio não pode ser negativo' });
+  }
   
-  res.json({
-    codigo: fundo.codigo,
-    patrimonio_anterior: fundo.patrimonio,
-    patrimonio_atual: novoPatrimonio,
-    alteracao: valor
-  });
+  // Valida tipo do patrimônio
+  if (patrimonio !== undefined && typeof patrimonio !== 'number') {
+    return res.status(400).json({ error: 'Patrimônio deve ser numérico' });
+  }
+  
+  // Cria objeto com apenas os campos que foram enviados
+  const atualizacoes = {};
+  
+  if (nome !== undefined) atualizacoes.nome = nome;
+  if (cnpj !== undefined) atualizacoes.cnpj = cnpj;
+  if (codigo_tipo !== undefined) atualizacoes.codigo_tipo = codigo_tipo;
+  if (patrimonio !== undefined) atualizacoes.patrimonio = patrimonio;
+  
+  // Aplica as atualizações
+  db.get('fundos').find({ codigo }).assign(atualizacoes).write();
+  
+  // Busca o fundo atualizado
+  const fundoAtualizado = db.get('fundos').find({ codigo }).value();
+  const tipo = db.get('tipos_fundo').find({ codigo: fundoAtualizado.codigo_tipo }).value();
+  
+  res.json({ ...fundoAtualizado, tipo_nome: tipo?.nome });
 });
-
-// GET - Listar tipos de fundo
-server.get('/tipos-fundo', (req, res) => {
-  const db = router.db;
-  const tipos = db.get('tipos_fundo').value();
-  res.json(tipos);
-});
-
 // ==================== ROUTER PADRÃO ====================
 server.use('/api', router);
 

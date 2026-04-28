@@ -27,17 +27,14 @@ constructor(private http: HttpClient ) { }
     return this.http.post<any>(this.apiUrl + '/fundos', Founds);
   }
 
-  PutFoundsByCode(Founds: Fundo, code: string): Observable<any> {
-    return this.http.put<any>(this.apiUrl + '/fundos/`${code}`', Founds);
-  }
 
   DeleteFoundsByCode(code: string): Observable<any> {
     const url = `${this.apiUrl}/fundos/${code}`;
     return this.http.delete(url);
   }
 
-  PutHeritageByCode(Founds: Fundo, code: string, heritage :number): Observable<any> {
-    return this.http.put<any>(this.apiUrl + '/fundos/`${code}`/`${heritage}`', Founds);
+  PatchFoundsByCode(code: string, updates: Partial<Fundo>): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/fundos/${code}`, updates);
   }
 
    getTypeFounds(): Observable<any> {

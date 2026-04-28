@@ -258,22 +258,6 @@ filterFoundByCode(code: string) {
 }
 
 
-  editHeritage(founds: Fundo, code: string, heritage: number) { // ver com o vini
-    this.foundsService.PutHeritageByCode(founds, code, heritage).subscribe({
-      next: (valor) => {
-        console.log(valor);
-        this.snackBar.open('Fundo atualizado com sucesso!', 'Fechar', { duration: 3000 });
-        this.router.navigate(['/founds-list']);
-        this.loading = false;
-        this.formatHeritage(heritage);
-      },
-      error: (error) => {
-        this.snackBar.open(error.error?.error || 'Erro ao atualizar', 'Fechar', { duration: 5000 });
-        this.loading = false;
-      }
-    });
-  }
-
   formatHeritage(valor: number): string {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -294,69 +278,6 @@ filterFoundByCode(code: string) {
     this.disableBodyScroll();
   }
 
-saveEditFundo(): void {
-  if (this.editFormGroup.invalid) {
-    this.snackBar.open('Preencha todos os campos obrigatórios', 'Fechar', { duration: 3000 });
-    return;
-  }
-
-  this.editLoading = true;
-
-  const formValue = this.editFormGroup.getRawValue();
-  
-  // Prepara os dados para enviar
-  const fundoAtualizado: Fundo = {
-    codigo: formValue.codigo.trim(),
-    nome: formValue.nome.trim(),
-    cnpj: formValue.cnpj.trim(),
-    codigo_tipo: String(formValue.codigo_tipo).trim(),
-    patrimonio: Number(formValue.patrimonio)
-  };
-
-  // Chama a API para atualizar
-  this.foundsService.PutFoundsByCode(fundoAtualizado, this.editingOriginalCode).subscribe({
-    next: (response) => {
-      console.log('Fundo atualizado:', response);
-      
-      // Atualiza a lista local
-      const index = this.dataSource.findIndex(f => f.codigo === this.editingOriginalCode);
-      if (index !== -1) {
-        this.dataSource[index] = fundoAtualizado;
-        this.filteredDataSource = [...this.dataSource];
-      }
-      
-      // Atualiza o service
-      this.foundsService.foundListServer = [...this.dataSource];
-      
-      this.editLoading = false;
-      this.closeEditModal();
-      
-      this.snackBar.open(`Fundo ${fundoAtualizado.codigo} atualizado com sucesso!`, 'Fechar', { 
-        duration: 3000,
-        panelClass: ['success-snackbar']
-      });
-    },
-    error: (error) => {
-      console.error('Erro ao atualizar:', error);
-      
-      let mensagemErro = 'Erro ao atualizar o fundo';
-      if (error.status === 404) {
-        mensagemErro = `Fundo ${this.editingOriginalCode} não encontrado`;
-      } else if (error.status === 400) {
-        mensagemErro = error.error?.error || 'Dados inválidos';
-      } else if (error.error?.error) {
-        mensagemErro = error.error.error;
-      }
-      
-      this.snackBar.open(` ${mensagemErro}`, 'Fechar', { 
-        duration: 5000,
-        panelClass: ['error-snackbar']
-      });
-      this.editLoading = false;
-    }
-  });
-}
-
   closeEditModal(): void {
     this.showEditModal = false;
     this.editLoading = false;
@@ -371,5 +292,31 @@ saveEditFundo(): void {
     this.document.body.style.overflow = 'auto';
   }
 
+  saveEditFundo(): void {
+  if (this.editFormGroup.invalid) return;
+  
+  this.editLoading = true;
+  const formValue = this.editFormGroup.getRawValue();
+  
+  // Prepara apenas o patrimônio (se for o caso)
+  const updates = {
+    patrimonio: Number(formValue.patrimonio),
+    nome: formValue.nome.trim(),
+    cnpj: formValue.cnpj.trim(),
+  };
+  
+  this.foundsService.PatchFoundsByCode(this.editingOriginalCode, updates).subscribe({
+    next: (response) => {
+      console.log('✅ Patrimônio atualizado:', response);
+      this.editLoading = false;
+      this.closeEditModal();
+       this.carregarFundos();
+    },
+    error: (error) => {
+      console.error('❌ Erro:', error);
+      this.editLoading = false;
+    }
+  });
+}
 
 }

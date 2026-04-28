@@ -32,10 +32,10 @@
   "fundos": [
     {
       "codigo": "FND001",
-      "nome": "Apple",
+      "nome": "biruleibe",
       "cnpj": "37.120.481/0001-89",
       "codigo_tipo": 1,
-      "patrimonio": 1500000000
+      "patrimonio": 70000
     },
     {
       "codigo": "FND002",
