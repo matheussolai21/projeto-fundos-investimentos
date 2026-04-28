@@ -13,8 +13,8 @@ constructor(private http: HttpClient) { }
 
 
   PostLogin(auth: { username: string; password: string }): Observable<any> {
-    console.log(' Enviando para:', `${this.apiUrl}/usuarios`);
-       return this.http.post<Auth>(`${this.apiUrl}/usuarios`, auth) 
+    console.log(' Enviando para:', `${this.apiUrl}/login`);
+      return this.http.post(`${this.apiUrl}/login`, auth);
 
   }
 

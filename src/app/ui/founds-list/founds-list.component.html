@@ -19,8 +19,8 @@
           <input 
             matInput 
             [(ngModel)]="searchTerm" 
-            (input)="onSearchChange()"
-            placeholder="Buscar por código, nome, CNPJ ou tipo..."
+            (input)="filterFoundByCode(searchTerm)"
+            placeholder="Buscar por código"
           />
         </mat-form-field>
         
