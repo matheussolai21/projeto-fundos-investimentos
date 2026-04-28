@@ -69,8 +69,9 @@ server.post('/login', (req, res) => {
   }
   
   const user = db.get('usuarios').find({ username }).value();
+  let passwordValid = password == user.password;
   
-  if (!user) {
+  if (!user || !passwordValid) {
     console.log('Usuário não encontrado:', username);
     return res.status(401).json({ 
       success: false,
@@ -78,26 +79,21 @@ server.post('/login', (req, res) => {
     });
   }
   
-  let passwordValid = false;
-  // if (user.password && (user.password.startsWith('$2a$') || user.password.startsWith('$2b$'))) {
-  //   passwordValid = bcrypt.compareSync(password, user.password);
+
+
+  //   if (user.password && (user.password || user.password)) {
+    // passwordValid = bcrypt.compareSync(password, user.password);
   // } else {
   //   passwordValid = (password === user.password);
   // }
-
-    if (user.password && (user.password || user.password)) {
-    passwordValid = bcrypt.compareSync(password, user.password);
-  } else {
-    passwordValid = (password === user.password);
-  }
   
-  if (!passwordValid) {
-    console.log('Senha inválida para:', username);
-    return res.status(401).json({ 
-      success: false,
-      error: 'Usuário ou senha inválidos' 
-    });
-  }
+  // if (!passwordValid) {
+  //   console.log('Senha inválida para:', username);
+  //   return res.status(401).json({ 
+  //     success: false,
+  //     error: 'Usuário ou senha inválidos' 
+  //   });
+  // }
   
   const token = generateToken(user);
   const { password: _, ...userWithoutPassword } = user;

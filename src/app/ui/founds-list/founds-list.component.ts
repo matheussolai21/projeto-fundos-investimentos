@@ -70,6 +70,7 @@ export class FoundsListComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
   ) {
     this.editFormGroup = this.formBuilder.group({
+      codigo: [{ value: '', disabled: true }],
       nome: ['', Validators.required],
       cnpj: ['', Validators.required],
       codigo_tipo: ['', Validators.required],
@@ -126,23 +127,6 @@ export class FoundsListComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSearchChange() {
-    const termo = this.searchTerm;
-
-    if (!termo || termo.trim() === '') {
-      // Se vazio, mostra todos
-      this.filteredDataSource = [...this.dataSource];
-    } else {
-      // Filtra a lista
-      const term = termo.toLowerCase();
-      this.filteredDataSource = this.dataSource.filter(fundo =>
-        fundo.codigo.toLowerCase().includes(term) ||
-        fundo.nome.toLowerCase().includes(term) ||
-        fundo.cnpj.includes(term) ||
-        fundo.codigo_tipo.toString().toLowerCase().includes(term)
-      );
-    }
-  }
 
   // Paginação
   get paginatedData(): Fundo[] {
@@ -309,8 +293,8 @@ filterFoundByCode(code: string) {
     next: (response) => {
       console.log('✅ Patrimônio atualizado:', response);
       this.editLoading = false;
+      this.carregarFundos();
       this.closeEditModal();
-       this.carregarFundos();
     },
     error: (error) => {
       console.error('❌ Erro:', error);
